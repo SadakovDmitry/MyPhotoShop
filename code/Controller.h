@@ -3,22 +3,21 @@
 
 #include "View.h"
 
+const int WINDOW_WIDTH = 1200;
+const int WINDOW_HEIGHT = 800;
+
 class Controller {
 public:
     sf::RenderWindow window;
-    std::vector<Molecule*> molecules;
     Window_Mgr window_mgr;
     Buttons_Manager buttons;
     View view_mgr;
-    Phys_Mgr phys_mgr;
     sf::Clock clock;
 
-    Controller() : window(sf::RenderWindow(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Moleculs")),
-                                            molecules(),
-                                            window_mgr(Window_Mgr(molecules)),
-                                            buttons(Buttons_Manager(molecules)),
-                                            view_mgr(View(molecules, buttons, &window_mgr)),
-                                            phys_mgr(Phys_Mgr(molecules)),
+    Controller() : window(sf::RenderWindow(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "PhotoShop")),
+                                            window_mgr(Window_Mgr()),
+                                            buttons(Buttons_Manager()),
+                                            view_mgr(View(buttons, &window_mgr)),
                                             clock() {
                                             srand(static_cast<unsigned>(time(0)));
                                             }
@@ -30,8 +29,6 @@ public:
 
     void update_model() {
         window_mgr.check_events(window);
-        float delta_time = clock.restart().asSeconds();
-        phys_mgr.check_collisions(molecules, delta_time);
     }
 };
 

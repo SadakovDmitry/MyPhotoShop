@@ -4,23 +4,17 @@
 #include "Scene.h"
 #include "Window_Mgr.h"
 #include "Buttons.h"
-#include "Phys_Mgr.h"
 
 class View {
 public:
-    std::vector<Molecule*>& molecules;
     Buttons_Manager button_mgr;
     Window_Mgr* window_mgr;
 
-    View(std::vector<Molecule*>& molecules_, class Buttons_Manager button_mgr_, Window_Mgr* window_mgr_) :
-                       molecules(molecules_),           button_mgr(button_mgr_), window_mgr(window_mgr_) {}
+    View(class Buttons_Manager button_mgr_, Window_Mgr* window_mgr_) :
+                               button_mgr(button_mgr_), window_mgr(window_mgr_) {}
 
     void draw_all(sf::RenderWindow& window) {
         window.clear(sf::Color::Black);
-        for (const auto& molecule : molecules) {
-            molecule -> draw(window);
-        }
-        //show_buttons(window);
         show_windows(window);
         window.display();
     }
