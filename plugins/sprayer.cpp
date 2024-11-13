@@ -135,7 +135,7 @@ namespace psapi {
 
     void SprayerTool::action() {
         srand(time(0));
-        ICanvas* canvas = static_cast<ICanvas*>(getRootWindowptr()->getWindowById(kCanvasWindowId));
+        ICanvas* canvas = static_cast<ICanvas*>(getRootWindow()->getWindowById(kCanvasWindowId));
         ILayer* temp_layer = canvas->getTempLayer();
         vec2i mouse_pos    = canvas->getMousePosition();
         vec2i canvas_pos   = canvas->getPos();
@@ -156,7 +156,7 @@ namespace psapi {
     extern "C" {
         __attribute__((visibility("default"))) bool loadPlugin() {
 
-            auto toolbar = static_cast<IBar*>(getRootWindowptr()->getWindowById(kToolBarWindowId));
+            auto toolbar = static_cast<IBar*>(getRootWindow()->getWindowById(kToolBarWindowId));
             ChildInfo info = toolbar->getNextChildInfo();
             auto tool = std::make_unique<SprayerTool>(info.pos, info.size, 3);
 

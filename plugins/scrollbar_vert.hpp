@@ -7,7 +7,7 @@
 #include "/Users/dima/MIPT/SecondSem/MyPaint/Standard/api_sfm.hpp"
 #include "/Users/dima/MIPT/SecondSem/MyPaint/Standard/api_canvas.hpp"
 #include "/Users/dima/MIPT/SecondSem/MyPaint/Standard/api_photoshop.hpp"
-//#include "/Users/dima/MIPT/SecondSem/MyPaint/Standard/canvas.hpp"
+#include "/Users/dima/MIPT/SecondSem/MyPaint/Standard/canvas.hpp"
 #include "/Users/dima/MIPT/SecondSem/MyPaint/Standard/photoshop.hpp"
 
 #include <cstdint>
@@ -87,7 +87,7 @@ private:
     const IWindow* parent;
     std::vector<std::unique_ptr<ABarButton>> scrollbar;
 public:
-    ScrollBarVert(vec2i pos_, vec2u size_) : id(kToolBarWindowId + 10), is_active(true), pos(pos_), size(size_), scale(vec2f(1, 1)), parent(nullptr), scrollbar() {
+    ScrollBarVert(vec2i pos_, vec2u size_) : id(kCanvasWindowId - 1), is_active(true), pos(pos_), size(size_), scale(vec2f(1, 1)), parent(nullptr), scrollbar() {
         //texture.create(static_cast<unsigned int>(size.x), static_cast<unsigned int>(size.y));
         std::vector<sfm::Color> pix_arr(size.x * size.y, sfm::Color(170, 170, 170, 255));
         texture.loadFromMemory(pix_arr.data(), size.x * size.y, sfm::IntRect(pos.y, pos.y, size.x, size.y));

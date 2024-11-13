@@ -6,7 +6,7 @@
 #include <dlfcn.h>
 
 namespace psapi {
-    const int kScrollBarWindowId  = kToolBarWindowId + 10;
+    const int kScrollBarWindowId  = kCanvasWindowId - 1;
     typedef IWindowContainer* (*RootWindow)();
 
     IWindowContainer* getRootWindowptr() {
@@ -231,7 +231,7 @@ namespace psapi {
 
     void ScrollBarSlider::action() {
         srand(time(0));
-        ICanvas* canvas = static_cast<ICanvas*>(getRootWindowptr()->getWindowById(kCanvasWindowId));
+        ICanvas* canvas = static_cast<ICanvas*>(getRootWindow()->getWindowById(kCanvasWindowId));
         ILayer* temp_layer = canvas->getTempLayer();
         vec2i mouse_pos    = canvas->getMousePosition();
         vec2i canvas_pos   = canvas->getPos();
@@ -246,7 +246,7 @@ namespace psapi {
     }
 
     void ScrollBarArrUp::action() {
-        ScrollBarVert* scrollbar = static_cast<ScrollBarVert*>(getRootWindowptr()->getWindowById(kScrollBarWindowId));
+        ScrollBarVert* scrollbar = static_cast<ScrollBarVert*>(getRootWindow()->getWindowById(kScrollBarWindowId));
         ScrollBarSlider* slider = static_cast<ScrollBarSlider*>(scrollbar->getWindowById(1));
         if (this->state == ABarButton::State::Press) {
             slider->pos.y -= 5;
@@ -255,7 +255,7 @@ namespace psapi {
     }
 
     void ScrollBarArrDown::action() {
-        ScrollBarVert* scrollbar = static_cast<ScrollBarVert*>(getRootWindowptr()->getWindowById(kScrollBarWindowId));
+        ScrollBarVert* scrollbar = static_cast<ScrollBarVert*>(getRootWindow()->getWindowById(kScrollBarWindowId));
         ScrollBarSlider* slider = static_cast<ScrollBarSlider*>(scrollbar->getWindowById(1));
         if (this->state == ABarButton::State::Press) {
             slider->pos.y += 5;
@@ -270,14 +270,14 @@ namespace psapi {
     extern "C" {
         __attribute__((visibility("default"))) bool loadPlugin() {
 
-            auto canvas = static_cast<ICanvas*>(getRootWindowptr()->getWindowById(psapi::kCanvasWindowId));
+            auto canvas = static_cast<ICanvas*>(getRootWindow()->getWindowById(psapi::kCanvasWindowId));
             vec2u size = {20, canvas->getSize().y};
             vec2i pos = {static_cast<int>(canvas->getPos().x + canvas->getSize().x - size.x),
                          static_cast<int>(canvas->getPos().y)};
             auto scrollbar = std::make_unique<ScrollBarVert>(pos, size);
-            getRootWindowptr()->addWindow(std::move(scrollbar));
+            getRootWindow()->addWindow(std::move(scrollbar));
 
-            auto toolbar = static_cast<IBar*>(getRootWindowptr()->getWindowById(kToolBarWindowId + 10));
+            auto toolbar = static_cast<IBar*>(getRootWindow()->getWindowById(kScrollBarWindowId));
             assert(toolbar);
 
             size = {toolbar->getSize().x, 40};

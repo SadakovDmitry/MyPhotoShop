@@ -10,7 +10,7 @@ namespace psapi {
     typedef IWindowContainer* (*RootWindow)();
 
     IWindowContainer* getRootWindowptr() {
-        void* photoshopLib = dlopen("/Users/dima/MIPT/SecondSem/MyPaint/Standard/libphotoshop.dylib", RTLD_LAZY);
+        void* photoshopLib = dlopen("/Users/dima/MIPT/SecondSem/MyPaint/Standard/libimplementation.dylib", RTLD_LAZY);
         if (!photoshopLib) {
             std::cerr << "Failed to load photoshop dylib in pencil: " << dlerror() << "\n";
         }
@@ -135,7 +135,7 @@ namespace psapi {
 
 
     void PencilTool::action() {
-        ICanvas* canvas = static_cast<ICanvas*>(getRootWindowptr()->getWindowById(kCanvasWindowId));
+        ICanvas* canvas = static_cast<ICanvas*>(getRootWindow()->getWindowById(kCanvasWindowId));
         ILayer* temp_layer = canvas->getTempLayer();
         vec2i mouse_pos    = canvas->getMousePosition();
         vec2i canvas_pos   = canvas->getPos();
@@ -192,7 +192,7 @@ namespace psapi {
 
     extern "C" {
         __attribute__((visibility("default"))) bool loadPlugin() {
-            auto toolbar = static_cast<IBar*>(getRootWindowptr()->getWindowById(kToolBarWindowId));
+            auto toolbar = static_cast<IBar*>(getRootWindow()->getWindowById(kToolBarWindowId));
             ChildInfo info = toolbar->getNextChildInfo();
             auto pencil = std::make_unique<PencilTool>(info.pos, info.size, 1);
 

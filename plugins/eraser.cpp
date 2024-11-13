@@ -28,7 +28,6 @@ namespace psapi {
         return getRootWindowlib();
     }
 
-
     void ABarButton::draw(IRenderWindow* renderWindow) {   // different sprites for each state
         //std::cout << "draw button\n";
         renderWindow->draw(&sprite);
@@ -136,7 +135,7 @@ namespace psapi {
 
 
     void EraserTool::action() {
-        ICanvas* canvas = static_cast<ICanvas*>(psapi::getRootWindowptr()->getWindowById(psapi::kCanvasWindowId));
+        ICanvas* canvas = static_cast<ICanvas*>(psapi::getRootWindow()->getWindowById(psapi::kCanvasWindowId));
         ILayer* temp_layer = canvas->getTempLayer();
         vec2i mouse_pos    = canvas->getMousePosition();
         vec2i canvas_pos   = canvas->getPos();
@@ -157,33 +156,7 @@ namespace psapi {
 
     extern "C" {
         __attribute__((visibility("default"))) bool loadPlugin() {
-//             void* photoshopLib = dlopen("/Users/dima/MIPT/SecondSem/MyPaint/Standard/libphotoshop.dylib", RTLD_LAZY);
-//             if (!photoshopLib) {
-//                 std::cerr << "Failed to load photoshop dylib in pencil: " << dlerror() << "\n";
-//                 return 1;
-//             }
-//
-//             RootWindow getRootWindowlib = reinterpret_cast<RootWindow>(dlsym(photoshopLib, "getRootWindow"));
-//
-//             if (!getRootWindowlib) {
-//                 std::cerr << "Failed to locate functions in photoshop dylib in pencil: " << dlerror() << "\n";
-//                 dlclose(photoshopLib);
-//                 return 1;
-//             }
-//
-//             //std::cout << "main:" << getRootWindowlib() << "\n";
-//             if (!getRootWindowlib()) {
-//                 std::cerr << "Failed to initialize photoshop in pencil.\n";
-//                 dlclose(photoshopLib);
-//                 return 1;
-//             }
-//
-//             std::cout << "Photoshop loaded successfully in pancil!\n";
-//             std::cout << "load plugin: " << getRootWindowlib() << "\n";
-
-            // vec2i pos(55, 5);
-            // vec2u size(50, 50);
-            auto toolbar = static_cast<IBar*>(getRootWindowptr()->getWindowById(kToolBarWindowId));
+            auto toolbar = static_cast<IBar*>(getRootWindow()->getWindowById(kToolBarWindowId));
             ChildInfo info = toolbar->getNextChildInfo();
             auto eraser = std::make_unique<EraserTool>(info.pos, info.size, 2);
 

@@ -7,7 +7,7 @@
 #include "/Users/dima/MIPT/SecondSem/MyPaint/Standard/api_sfm.hpp"
 #include "/Users/dima/MIPT/SecondSem/MyPaint/Standard/api_canvas.hpp"
 #include "/Users/dima/MIPT/SecondSem/MyPaint/Standard/api_photoshop.hpp"
-//#include "/Users/dima/MIPT/SecondSem/MyPaint/Standard/canvas.hpp"
+#include "/Users/dima/MIPT/SecondSem/MyPaint/Standard/canvas.hpp"
 #include "/Users/dima/MIPT/SecondSem/MyPaint/Standard/photoshop.hpp"
 
 #include <cstdint>
@@ -29,16 +29,6 @@ protected:
     State state;
     const IWindow* parent;
 public:
-    // ABarButton(vec2i pos_, vec2u size_, wid_t id_) : id(id_), is_active(true), pos(pos_), size(size_), scale(vec2f(1, 1)), parent(nullptr) {
-    //     // if(!texture.loadFromFile("/Users/dima/MIPT/SecondSem/MyPaint/source/Pencil.png")) {
-    //     //     //throw std::runtime_error("ошибка открытия файла > " + file + "!");
-    //     // }
-    //     // sprite.setTexture(&texture);
-    //     // sprite.setTextureRect(sfm::IntRect(0, 0, 50, 50));
-    //     // sprite.setScale(1, 1);
-    //     // sprite.setColor(sfm::Color(255, 255, 255, 255));
-    //     // sprite.setPosition(5, 5);
-    // }
     ABarButton(vec2i pos_, vec2u size_, wid_t id_) : id(id_), is_active(true), pos(pos_), size(size_), scale(vec2f(1, 1)), parent(nullptr) {}
     ABarButton() = default;
 
@@ -77,6 +67,7 @@ public:
 class ScrollBarGor : public IBar {
 private:
     friend class ScrollBar;
+    friend class ScrollBarSlider;
     wid_t id;
     bool is_active;
     vec2i pos;
@@ -86,8 +77,9 @@ private:
     sfm::Texture texture;
     const IWindow* parent;
     std::vector<std::unique_ptr<ABarButton>> scrollbar;
+    Scrollable* scroll_obj;
 public:
-    ScrollBarGor(vec2i pos_, vec2u size_) : id(kToolBarWindowId + 11), is_active(true), pos(pos_), size(size_), scale(vec2f(1, 1)), parent(nullptr), scrollbar() {
+    ScrollBarGor(vec2i pos_, vec2u size_, Scrollable* scroll_obj_) : id(kToolBarWindowId + 11), is_active(true), pos(pos_), size(size_), scale(vec2f(1, 1)), parent(nullptr), scrollbar(), scroll_obj(scroll_obj_) {
         //texture.create(static_cast<unsigned int>(size.x), static_cast<unsigned int>(size.y));
         std::vector<sfm::Color> pix_arr(size.x * size.y, sfm::Color(170, 170, 170, 255));
         texture.loadFromMemory(pix_arr.data(), size.x * size.y, sfm::IntRect(pos.y, pos.y, size.x, size.y));
@@ -130,6 +122,10 @@ public:
     virtual ChildInfo getNextChildInfo() const;
 
     virtual void finishButtonDraw(IRenderWindow* renderWindow, const IBarButton* button) const;
+
+    Scrollable* getScrollObject() const {
+        return scroll_obj;
+    }
 };
 
 class ScrollBarSlider : public ABarButton {
