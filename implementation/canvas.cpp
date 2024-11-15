@@ -82,24 +82,20 @@ namespace psapi {
     }
 
     bool Canvas::update(const IRenderWindow* renderWindow, const Event& event) {
-        //vec2i shift = CalcMouseShift();
-        //sprite.setTextureRect(sfm::IntRect(scroll_shift.x, 0, size.x, size.y));
         if (event.type == Event::MouseMoved) {
             mouse_pos = sfm::vec2i(event.mouseMove.x - layer_pos.x, event.mouseMove.y - layer_pos.y);
 
-            if (mouse_pos.x >= layer_pos.x && mouse_pos.x <= layer_pos.x + layer_size.x &&
-                mouse_pos.y >= layer_pos.y && mouse_pos.y <= layer_pos.y + layer_size.y) {
+            if (mouse_pos.x >= 0 && mouse_pos.x <= layer_size.x &&
+                mouse_pos.y >= 0 && mouse_pos.y <= layer_size.y) {
                 return true;
             }
             return true;
         }
         if (event.type == Event::MouseButtonPressed) {
             mouse_pos = sfm::vec2i(event.mouseButton.x - layer_pos.x, event.mouseButton.y - layer_pos.y);
-            // std::cout << "mouse " << mouse_pos.x << ", " << mouse_pos.y << std::endl;
-            // std::cout << "layer " << layer_pos.x << ", " << layer_pos.y << std::endl;
 
-            if (mouse_pos.x >= layer_pos.x && mouse_pos.x <= layer_pos.x + layer_size.x &&
-                mouse_pos.y >= layer_pos.y && mouse_pos.y <= layer_pos.y + layer_size.y) {
+            if (mouse_pos.x >= 0 && mouse_pos.x <= layer_size.x &&
+                mouse_pos.y >= 0 && mouse_pos.y <= layer_size.y) {
                 is_pressed = true;
                 return true;
             }
@@ -109,8 +105,8 @@ namespace psapi {
         if (event.type == Event::MouseButtonReleased) {
             mouse_pos = sfm::vec2i(event.mouseButton.x - layer_pos.x, event.mouseButton.y - layer_pos.y);
 
-            if (mouse_pos.x >= layer_pos.x && mouse_pos.x <= layer_pos.x + layer_size.x &&
-                mouse_pos.y >= layer_pos.y && mouse_pos.y <= layer_pos.y + layer_size.y) {
+            if (mouse_pos.x >= 0 && mouse_pos.x <= layer_size.x &&
+                mouse_pos.y >= 0 && mouse_pos.y <= layer_size.y) {
                 is_pressed = false;
                 return true;
             }
