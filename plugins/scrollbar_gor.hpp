@@ -137,7 +137,7 @@ private:
     Scrollable* scroll_obj;
 public:
     ScrollBarSlider(vec2i pos_, vec2u size_, wid_t id_, Scrollable* scroll_obj_)
-        : ABarButton(pos_, size_, id_),  is_dragging(false), scroll_obj(scroll_obj_) {
+        : ABarButton(pos_, size_, id_), is_dragging(false), scroll_obj(scroll_obj_) {
         //texture.create(static_cast<unsigned int>(size.x), static_cast<unsigned int>(size.y));
         std::vector<sfm::Color> pix_arr(size.x * size.y, sfm::Color(100, 100, 100, 255));
         texture.loadFromMemory(pix_arr.data(), size.x * size.y, sfm::IntRect(pos.y, pos.y, size.x, size.y));

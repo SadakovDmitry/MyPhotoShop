@@ -230,14 +230,11 @@ namespace psapi {
 
 
     void ScrollBarSlider::action() {
-        srand(time(0));
         Canvas* canvas = static_cast<Canvas*>(getRootWindow()->getWindowById(kCanvasWindowId));
-        //ScrollBarHor* scrollbar = static_cast<ScrollBarHor*>(getRootWindow()->getWindowById(kScrollBarHorWindowId));
-        //ScrollBarSlider* slider = static_cast<ScrollBarSlider*>(scrollbar->getWindowById(1));
         ILayer* temp_layer = canvas->getTempLayer();
         vec2i mouse_pos    = canvas->getMousePosition();
         vec2i canvas_pos   = canvas->getPos();
-        vec2u canvas_size   = canvas->getSize();
+        vec2u canvas_size  = canvas->getSize();
 
         vec2i cur_pos;
 
@@ -247,7 +244,7 @@ namespace psapi {
         if (this->state == ABarButton::State::Press) {
             is_dragging = true;
             drag_offset.x = mouse_pos.x + canvas->layer_pos.x - pos.x;
-            scroll_obj->setShift({canvas_pos.x - canvas->layer_pos.x, 0});
+            scroll_obj->setShift({canvas_pos.x - canvas->layer_pos.x, canvas_pos.y - canvas->layer_pos.y});
         }
         else if (is_dragging) {
 
@@ -301,6 +298,7 @@ namespace psapi {
 
             auto toolbar = static_cast<IBar*>(getRootWindow()->getWindowById(kScrollBarHorWindowId));
             assert(toolbar);
+
             float slider_scale = canvas->getSize().x / (layer_size.x * 1.0);
             size = {static_cast<uint32_t>(slider_scale * canvas->getSize().x), toolbar->getSize().y};
             pos = {static_cast<int>(canvas->getPos().x),
