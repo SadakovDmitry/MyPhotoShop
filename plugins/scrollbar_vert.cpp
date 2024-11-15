@@ -281,8 +281,10 @@ namespace psapi {
             assert(toolbar);
 
             size = {toolbar->getSize().x, 40};
+            // pos = {static_cast<int>(canvas->getPos().x + canvas->getSize().x - size.x),
+            //       (static_cast<int>(canvas->getPos().y + canvas->getSize().y - size.y) / 2)};
             pos = {static_cast<int>(canvas->getPos().x + canvas->getSize().x - size.x),
-                  (static_cast<int>(canvas->getPos().y + canvas->getSize().y - size.y) / 2)};
+                   static_cast<int>(canvas->getPos().y + size.y / 2)};
             auto slider = std::make_unique<ScrollBarSlider>(pos, size, 1);
 
             size = {toolbar->getSize().x, toolbar->getSize().x};

@@ -50,7 +50,7 @@ bool loadBasePlugin() {
 //     pos = {5, 55};
 //     auto sprayer = std::make_unique<psapi::SprayerTool>(pos, size, 3);
     pos = {200, 100};
-    size = {900, 520};
+    size = {900, 500};
     vec2u layers_size = {1800, 1000};
     auto canvas = std::make_unique<psapi::Canvas>(pos, size, layers_size);
 //

@@ -139,24 +139,25 @@ namespace psapi {
         ILayer* temp_layer = canvas->getTempLayer();
         vec2i mouse_pos    = canvas->getMousePosition();
         vec2i canvas_pos   = canvas->getPos();
-        mouse_pos.x -= canvas_pos.x;
-        mouse_pos.y -= canvas_pos.y;
+        // mouse_pos.x -= canvas_pos.x;
+        // mouse_pos.y -= canvas_pos.y;
         // if (canvas->isPressed()) {
         //     temp_layer->setPixel(mouse_pos, {0, 255, 0, 255});
         // }
+            //std::cout << "pencil" << mouse_pos.x << ", " << mouse_pos.y << "\n";
 
-        if (points_arr.size() < 4) {
-            points_arr.push_back(mouse_pos);
-        } else {
-            points_arr.erase(points_arr.begin());
-            points_arr.push_back(mouse_pos);
-    	    for (double t = 0; t <= 1; t += 0.001) {
-                vec2i point = (*this)(t + 1);
-                if (canvas->isPressed()) {
-                    temp_layer->setPixel(point, {0, 255, 0, 255});
-                }
-    	    }
-        }
+            if (points_arr.size() < 4) {
+                points_arr.push_back(mouse_pos);
+            } else {
+                points_arr.erase(points_arr.begin());
+                points_arr.push_back(mouse_pos);
+    	        for (double t = 0; t <= 1; t += 0.001) {
+                    vec2i point = (*this)(t + 1);
+                    if (canvas->isPressed()) {
+                        temp_layer->setPixel(point, {0, 255, 0, 255});
+                    }
+    	        }
+            }
     }
 
     double PencilTool::CatmullRom(double p0, double p1, double p2, double p3, double t){

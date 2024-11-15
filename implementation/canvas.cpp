@@ -82,9 +82,10 @@ namespace psapi {
     }
 
     bool Canvas::update(const IRenderWindow* renderWindow, const Event& event) {
-        vec2i shift = CalcMouseShift();
+        //vec2i shift = CalcMouseShift();
+        //sprite.setTextureRect(sfm::IntRect(scroll_shift.x, 0, size.x, size.y));
         if (event.type == Event::MouseMoved) {
-            mouse_pos = sfm::vec2i(event.mouseMove.x  + shift.x, event.mouseMove.y  + shift.y);
+            mouse_pos = sfm::vec2i(event.mouseMove.x - layer_pos.x, event.mouseMove.y - layer_pos.y);
 
             if (mouse_pos.x >= layer_pos.x && mouse_pos.x <= layer_pos.x + layer_size.x &&
                 mouse_pos.y >= layer_pos.y && mouse_pos.y <= layer_pos.y + layer_size.y) {
@@ -93,7 +94,9 @@ namespace psapi {
             return true;
         }
         if (event.type == Event::MouseButtonPressed) {
-            mouse_pos = sfm::vec2i(event.mouseButton.x  + shift.x, event.mouseButton.y  + shift.y);
+            mouse_pos = sfm::vec2i(event.mouseButton.x - layer_pos.x, event.mouseButton.y - layer_pos.y);
+            // std::cout << "mouse " << mouse_pos.x << ", " << mouse_pos.y << std::endl;
+            // std::cout << "layer " << layer_pos.x << ", " << layer_pos.y << std::endl;
 
             if (mouse_pos.x >= layer_pos.x && mouse_pos.x <= layer_pos.x + layer_size.x &&
                 mouse_pos.y >= layer_pos.y && mouse_pos.y <= layer_pos.y + layer_size.y) {
@@ -104,7 +107,7 @@ namespace psapi {
             return true;
         }
         if (event.type == Event::MouseButtonReleased) {
-            mouse_pos = sfm::vec2i(event.mouseButton.x  + shift.x, event.mouseButton.y  + shift.y);
+            mouse_pos = sfm::vec2i(event.mouseButton.x - layer_pos.x, event.mouseButton.y - layer_pos.y);
 
             if (mouse_pos.x >= layer_pos.x && mouse_pos.x <= layer_pos.x + layer_size.x &&
                 mouse_pos.y >= layer_pos.y && mouse_pos.y <= layer_pos.y + layer_size.y) {
@@ -295,9 +298,15 @@ namespace psapi {
     }
 
     bool Canvas::scroll(const vec2i& vec) {
-        std::cout << "scroll\n";
-        vec2f sprite_pos = sprite.getPosition();
-        sprite.setTextureRect(sfm::IntRect(sprite_pos.x + vec.x, sprite_pos.y + vec.y, size.x, size.y));
+        //std::cout << "sprite_pos " << layer_pos.x << ", " << layer_pos.y << "\n";
+
+        layer_pos.x = static_cast<int>(layer_pos.x - vec.x);
+        layer_pos.y = static_cast<int>(layer_pos.y - vec.y);
+
+        scroll_shift.x += vec.x;
+        scroll_shift.y += vec.y;
+        sprite.setTextureRect(sfm::IntRect(scroll_shift.x, scroll_shift.y, size.x, size.y));
+
         return true;
     }
 

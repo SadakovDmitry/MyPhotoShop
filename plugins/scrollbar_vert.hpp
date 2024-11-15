@@ -3,12 +3,12 @@
 
 //#include "api_photoshop.hpp"
 #include "/Users/dima/MIPT/SecondSem/MyPaint/Standard/api_bar.hpp"
-#include "/Users/dima/MIPT/SecondSem/MyPaint/Standard/sfm_prot.hpp"
+#include "/Users/dima/MIPT/SecondSem/MyPaint/implementation/my_sfm.hpp"
 #include "/Users/dima/MIPT/SecondSem/MyPaint/Standard/api_sfm.hpp"
 #include "/Users/dima/MIPT/SecondSem/MyPaint/Standard/api_canvas.hpp"
 #include "/Users/dima/MIPT/SecondSem/MyPaint/Standard/api_photoshop.hpp"
-#include "/Users/dima/MIPT/SecondSem/MyPaint/Standard/canvas.hpp"
-#include "/Users/dima/MIPT/SecondSem/MyPaint/Standard/photoshop.hpp"
+#include "/Users/dima/MIPT/SecondSem/MyPaint/implementation/canvas.hpp"
+#include "/Users/dima/MIPT/SecondSem/MyPaint/implementation/photoshop.hpp"
 
 #include <cstdint>
 #include <memory>

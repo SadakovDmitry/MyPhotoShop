@@ -6,7 +6,7 @@
 #include <dlfcn.h>
 
 namespace psapi {
-    const int kScrollBarGorWindowId  = kToolBarWindowId + 11;
+    const int kScrollBarHorWindowId  = kToolBarWindowId + 11;
     typedef IWindowContainer* (*RootWindow)();
 
     IWindowContainer* getRootWindowptr() {
@@ -140,7 +140,7 @@ namespace psapi {
 //                                                                          ScrollBar
 //-----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-    void ScrollBarGor::draw(IRenderWindow* renderWindow) {
+    void ScrollBarHor::draw(IRenderWindow* renderWindow) {
         renderWindow->draw(&sprite);
         for (const auto& button : scrollbar) {
             button->draw(renderWindow);
@@ -149,7 +149,7 @@ namespace psapi {
         //std::cout << "draw ScrollBar\n";
     }
 
-    bool ScrollBarGor::update(const IRenderWindow* renderWindow, const Event& event) {
+    bool ScrollBarHor::update(const IRenderWindow* renderWindow, const Event& event) {
         for (auto& button : scrollbar) {
             if (button->update(renderWindow, event)) {
                 //if (button->getState() == ABarButton::State::Press) {
@@ -163,9 +163,9 @@ namespace psapi {
         return false;
     }
 
-    wid_t ScrollBarGor::getId() const { return id; }
+    wid_t ScrollBarHor::getId() const { return id; }
 
-    IWindow* ScrollBarGor::getWindowById(wid_t id) {
+    IWindow* ScrollBarHor::getWindowById(wid_t id) {
         if (this->id == id) return this;
         for (auto& button : scrollbar) {
             IWindow* found = button->getWindowById(id);
@@ -174,7 +174,7 @@ namespace psapi {
         return nullptr;
     }
 
-    const IWindow* ScrollBarGor::getWindowById(wid_t id) const {
+    const IWindow* ScrollBarHor::getWindowById(wid_t id) const {
         if (this->id == id) return this;
         for (const auto& button : scrollbar) {
             const IWindow* found = button->getWindowById(id);
@@ -183,20 +183,20 @@ namespace psapi {
         return nullptr;
     }
 
-    vec2i ScrollBarGor::getPos() const { return pos; }
-    vec2u ScrollBarGor::getSize() const { return size; }
-    void ScrollBarGor::setParent(const IWindow* parent) { this->parent = parent; }
-    void ScrollBarGor::forceActivate() { is_active = true; }
-    void ScrollBarGor::forceDeactivate() { is_active = false; }
-    bool ScrollBarGor::isActive() const { return is_active == true; }
-    bool ScrollBarGor::isWindowContainer() const { return true; }
+    vec2i ScrollBarHor::getPos() const { return pos; }
+    vec2u ScrollBarHor::getSize() const { return size; }
+    void ScrollBarHor::setParent(const IWindow* parent) { this->parent = parent; }
+    void ScrollBarHor::forceActivate() { is_active = true; }
+    void ScrollBarHor::forceDeactivate() { is_active = false; }
+    bool ScrollBarHor::isActive() const { return is_active == true; }
+    bool ScrollBarHor::isWindowContainer() const { return true; }
 
-    void ScrollBarGor::addWindow(std::unique_ptr<IWindow> window) {
+    void ScrollBarHor::addWindow(std::unique_ptr<IWindow> window) {
         scrollbar.push_back(std::unique_ptr<ABarButton>(dynamic_cast<ABarButton*>(window.release())));
 
     }
 
-    void ScrollBarGor::removeWindow(wid_t id) {
+    void ScrollBarHor::removeWindow(wid_t id) {
         scrollbar.erase(
             std::remove_if(
                 scrollbar.begin(),
@@ -209,7 +209,7 @@ namespace psapi {
         );
     }
 
-    ChildInfo ScrollBarGor::getNextChildInfo() const {
+    ChildInfo ScrollBarHor::getNextChildInfo() const {
         ChildInfo info;
         int totalWidth = 0;
         for (const auto& button : scrollbar) {
@@ -220,7 +220,7 @@ namespace psapi {
         return info;
     }
 
-    void ScrollBarGor::finishButtonDraw(IRenderWindow* renderWindow, const IBarButton* button) const {
+    void ScrollBarHor::finishButtonDraw(IRenderWindow* renderWindow, const IBarButton* button) const {
         // renderWindow->draw(reinterpret_cast<const sfm::Drawable*>(&(static_cast<const BarButton*>(button)->sprite)));
     }
 
@@ -232,6 +232,8 @@ namespace psapi {
     void ScrollBarSlider::action() {
         srand(time(0));
         Canvas* canvas = static_cast<Canvas*>(getRootWindow()->getWindowById(kCanvasWindowId));
+        //ScrollBarHor* scrollbar = static_cast<ScrollBarHor*>(getRootWindow()->getWindowById(kScrollBarHorWindowId));
+        //ScrollBarSlider* slider = static_cast<ScrollBarSlider*>(scrollbar->getWindowById(1));
         ILayer* temp_layer = canvas->getTempLayer();
         vec2i mouse_pos    = canvas->getMousePosition();
         vec2i canvas_pos   = canvas->getPos();
@@ -243,41 +245,41 @@ namespace psapi {
             is_dragging = false;
         }
         if (this->state == ABarButton::State::Press) {
-            ScrollBarGor* scrollbar = static_cast<ScrollBarGor*>(getRootWindow()->getWindowById(kScrollBarGorWindowId));
-            int slider_pos_x = pos.x;
-            float shift_coef  = static_cast<float>(slider_pos_x - canvas_pos.x) / canvas_size.x;
-            int shift_x = (shift_coef * (canvas->layer_size.x - canvas_size.x)) * (canvas->layer_size.x / canvas_size.x);
             is_dragging = true;
-            drag_offset.x = mouse_pos.x - pos.x - shift_x;
-            drag_offset.y = mouse_pos.y - pos.y;
-            //scroll_obj->setShift(shift_x, pos.y);
+            drag_offset.x = mouse_pos.x + canvas->layer_pos.x - pos.x;
+            scroll_obj->setShift({canvas_pos.x - canvas->layer_pos.x, 0});
         }
-        if (is_dragging) {
-            ScrollBarGor* scrollbar = static_cast<ScrollBarGor*>(getRootWindow()->getWindowById(kScrollBarGorWindowId));
-            int slider_pos_x = pos.x;
-            float shift_coef  = static_cast<float>(slider_pos_x - canvas_pos.x) / canvas_size.x;
-            int shift_x = (shift_coef * (canvas->layer_size.x - canvas_size.x)) * (canvas->layer_size.x / canvas_size.x);
-            pos.x = std::min(static_cast<int>(canvas_pos.x + canvas_size.x - size.x),
-                    std::max(static_cast<int>(mouse_pos.x - drag_offset.x - shift_x), canvas_pos.x));
+        else if (is_dragging) {
+
+            int old_slider_pos_x = pos.x;
+            int new_slider_pos_x = mouse_pos.x + canvas->layer_pos.x - drag_offset.x;
+
+            new_slider_pos_x = std::min(static_cast<int>(canvas_pos.x + canvas_size.x - size.x),
+                    std::max(new_slider_pos_x, canvas_pos.x));
+            int slider_shift_x = (new_slider_pos_x - old_slider_pos_x);
+            int layer_shift_x = slider_shift_x * (canvas->layer_size.x / canvas_size.x);
+            pos.x = new_slider_pos_x;
             sprite.setPosition(pos.x, pos.y);
-            //scroll_obj->scroll(pos.x - slider_pos_x, 0);
+            scroll_obj->scroll({layer_shift_x, 0});
         }
     }
 
     void ScrollBarArrRight::action() {
-        ScrollBarGor* scrollbar = static_cast<ScrollBarGor*>(getRootWindow()->getWindowById(kScrollBarGorWindowId));
+        ScrollBarHor* scrollbar = static_cast<ScrollBarHor*>(getRootWindow()->getWindowById(kScrollBarHorWindowId));
         ScrollBarSlider* slider = static_cast<ScrollBarSlider*>(scrollbar->getWindowById(1));
         if (this->state == ABarButton::State::Press) {
             slider->pos.x += 5;
+            scroll_obj->scroll({5, 0});
             slider->sprite.setPosition(slider->pos.x, slider->pos.y);
         }
     }
 
     void ScrollBarArrLeft::action() {
-        ScrollBarGor* scrollbar = static_cast<ScrollBarGor*>(getRootWindow()->getWindowById(kScrollBarGorWindowId));
+        ScrollBarHor* scrollbar = static_cast<ScrollBarHor*>(getRootWindow()->getWindowById(kScrollBarHorWindowId));
         ScrollBarSlider* slider = static_cast<ScrollBarSlider*>(scrollbar->getWindowById(1));
         if (this->state == ABarButton::State::Press) {
             slider->pos.x -= 5;
+            scroll_obj->scroll({-5, 0});
             slider->sprite.setPosition(slider->pos.x, slider->pos.y);
         }
     }
@@ -293,26 +295,26 @@ namespace psapi {
             vec2u size = {canvas->getSize().x, 20};
             vec2i pos = {static_cast<int>(canvas->getPos().x),
                          static_cast<int>(canvas->getPos().y + canvas->getSize().y)};
-            auto scrollbar = std::make_unique<ScrollBarGor>(pos, size, static_cast<Scrollable*>(canvas));
+            auto scrollbar = std::make_unique<ScrollBarHor>(pos, size, static_cast<Scrollable*>(canvas));
             getRootWindow()->addWindow(std::move(scrollbar));
             vec2u layer_size = static_cast<Canvas*>(canvas)->layer_size;
 
-            auto toolbar = static_cast<IBar*>(getRootWindow()->getWindowById(kScrollBarGorWindowId));
+            auto toolbar = static_cast<IBar*>(getRootWindow()->getWindowById(kScrollBarHorWindowId));
             assert(toolbar);
             float slider_scale = canvas->getSize().x / (layer_size.x * 1.0);
             size = {static_cast<uint32_t>(slider_scale * canvas->getSize().x), toolbar->getSize().y};
             pos = {static_cast<int>(canvas->getPos().x),
                    static_cast<int>(canvas->getPos().y + canvas->getSize().y)};
-            auto slider = std::make_unique<ScrollBarSlider>(pos, size, 1);
+            auto slider = std::make_unique<ScrollBarSlider>(pos, size, 1, static_cast<Scrollable*>(canvas));
 
             size = {toolbar->getSize().y, toolbar->getSize().y};
             pos = {static_cast<int>(canvas->getPos().x + canvas->getSize().x - size.x),
                    static_cast<int>(canvas->getPos().y + canvas->getSize().y)};
-            auto arr_up = std::make_unique<ScrollBarArrRight>(pos, size, 2);
+            auto arr_up = std::make_unique<ScrollBarArrRight>(pos, size, 2, static_cast<Scrollable*>(canvas));
 
             pos = {static_cast<int>(canvas->getPos().x),
                    static_cast<int>(canvas->getPos().y + canvas->getSize().y)};
-            auto arr_down = std::make_unique<ScrollBarArrLeft>(pos, size, 3);
+            auto arr_down = std::make_unique<ScrollBarArrLeft>(pos, size, 3, static_cast<Scrollable*>(canvas));
 
             toolbar->addWindow(std::move(slider));
             toolbar->addWindow(std::move(arr_up));
