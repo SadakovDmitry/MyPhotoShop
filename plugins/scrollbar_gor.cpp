@@ -28,115 +28,6 @@ namespace psapi {
     }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------------------------
-//                                                                          ABarButton
-//-----------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-    void ABarButton::draw(IRenderWindow* renderWindow) {   // different sprites for each state
-        //std::cout << "draw slider\n";
-        renderWindow->draw(&sprite);
-        switch (getState()) {
-            case State::Hover:
-                // std::cout << "Hover button\n";
-                renderWindow->draw(&sprite);
-                break;
-            case State::Press:
-                // std::cout << "Press button\n";
-                renderWindow->draw(&sprite);
-                break;
-            case State::Released:
-                // std::cout << "Released button\n";
-                renderWindow->draw(&sprite);
-                break;
-            case State::Normal:
-                // std::cout << "Normal button\n";
-            default:
-                // std::cout << "default button\n";
-                renderWindow->draw(&sprite);
-                break;
-        }
-    }
-
-    bool ABarButton::update(const IRenderWindow* renderWindow, const Event& event) {
-        vec2i mousePos = sfm::vec2i(event.mouseButton.x, event.mouseButton.y);
-
-        if (event.type == Event::MouseMoved) {
-            if (mousePos.x >= getPos().x && mousePos.x <= getPos().x + getSize().x &&
-                mousePos.y >= getPos().y && mousePos.y <= getPos().y + getSize().y) {
-                setState(ABarButton::State::Hover);
-            } else {
-                setState(ABarButton::State::Normal);
-            }
-            return true;
-        }
-
-        if (event.type == Event::MouseButtonPressed) {
-            if (mousePos.x >= getPos().x && mousePos.x <= getPos().x + getSize().x &&
-                mousePos.y >= getPos().y && mousePos.y <= getPos().y + getSize().y) {
-                setState(ABarButton::State::Press);
-                return true;
-            }
-        }
-
-        if (event.type == Event::MouseButtonReleased) {
-            if (mousePos.x >= getPos().x && mousePos.x <= getPos().x + getSize().x &&
-                mousePos.y >= getPos().y && mousePos.y <= getPos().y + getSize().y) {
-                setState(ABarButton::State::Released);
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    wid_t ABarButton::getId() const {
-        return id;
-    }
-
-    IWindow* ABarButton::getWindowById(wid_t id) {
-        if (this->id == id) {
-            return this;
-        }
-        return nullptr;
-    }
-
-    const IWindow* ABarButton::getWindowById(wid_t id) const {
-        if (this->id == id) {
-            return this;
-        }
-        return nullptr;
-    }
-
-    vec2i ABarButton::getPos() const {
-        return pos;
-    }
-
-    vec2u ABarButton::getSize() const {
-        return size;
-    }
-
-    void ABarButton::setParent(const IWindow* parent) {
-       this->parent = parent;
-    }
-
-    void ABarButton::forceActivate() {is_active = false;}
-
-    void ABarButton::forceDeactivate() {is_active = false;}
-
-    bool ABarButton::isActive() const { return is_active == true; }
-
-    bool ABarButton::isWindowContainer() const {
-        return false;
-    }
-
-    void ABarButton::setState(ABarButton::State state) {
-        this->state = state;
-    }
-
-    ABarButton::State ABarButton::getState() const {
-        return state;
-    }
-
-//-----------------------------------------------------------------------------------------------------------------------------------------------------------------
 //                                                                          ScrollBar
 //-----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -155,7 +46,7 @@ namespace psapi {
                 //if (button->getState() == ABarButton::State::Press) {
                     button->action();
                 //     ICanvas* canvas = static_cast<ICanvas*>(getRootWindow()->getWindowById(psapi::kCanvasWindowId));
-                //     canvas->setActiveTool(static_cast<ABarButton*>(button.get()));
+                //     canvas->setActiveTool(nullptr);
                 //}
                 return true;
             }
@@ -292,7 +183,9 @@ namespace psapi {
             vec2u size = {canvas->getSize().x, 20};
             vec2i pos = {static_cast<int>(canvas->getPos().x),
                          static_cast<int>(canvas->getPos().y + canvas->getSize().y)};
-            auto scrollbar = std::make_unique<ScrollBarHor>(pos, size, static_cast<Scrollable*>(canvas));
+            Scrollable* scroll_obj = static_cast<Scrollable*>(canvas);
+            scroll_obj->setShift({canvas->getPos().x - canvas->layer_pos.x, canvas->getPos().y - canvas->layer_pos.y});
+            auto scrollbar = std::make_unique<ScrollBarHor>(pos, size, scroll_obj);
             getRootWindow()->addWindow(std::move(scrollbar));
             vec2u layer_size = static_cast<Canvas*>(canvas)->layer_size;
 
@@ -303,16 +196,16 @@ namespace psapi {
             size = {static_cast<uint32_t>(slider_scale * canvas->getSize().x), toolbar->getSize().y};
             pos = {static_cast<int>(canvas->getPos().x),
                    static_cast<int>(canvas->getPos().y + canvas->getSize().y)};
-            auto slider = std::make_unique<ScrollBarSlider>(pos, size, 1, static_cast<Scrollable*>(canvas));
+            auto slider = std::make_unique<ScrollBarSlider>(pos, size, 1, scroll_obj);
 
             size = {toolbar->getSize().y, toolbar->getSize().y};
             pos = {static_cast<int>(canvas->getPos().x + canvas->getSize().x - size.x),
                    static_cast<int>(canvas->getPos().y + canvas->getSize().y)};
-            auto arr_up = std::make_unique<ScrollBarArrRight>(pos, size, 2, static_cast<Scrollable*>(canvas));
+            auto arr_up = std::make_unique<ScrollBarArrRight>(pos, size, 2, scroll_obj);
 
             pos = {static_cast<int>(canvas->getPos().x),
                    static_cast<int>(canvas->getPos().y + canvas->getSize().y)};
-            auto arr_down = std::make_unique<ScrollBarArrLeft>(pos, size, 3, static_cast<Scrollable*>(canvas));
+            auto arr_down = std::make_unique<ScrollBarArrLeft>(pos, size, 3, scroll_obj);
 
             toolbar->addWindow(std::move(slider));
             toolbar->addWindow(std::move(arr_up));

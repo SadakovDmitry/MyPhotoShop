@@ -4,8 +4,10 @@
 // #include "api_photoshop.hpp"
 // #include "api_sfm.hpp"
 #include "/Users/dima/MIPT/SecondSem/MyPaint/Standard/api_canvas.hpp"
+
 #include "toolbar.hpp"
 #include "my_sfm.hpp"
+#include "ABarButton.hpp"
 
 #include <cstdint>
 #include <memory>
@@ -56,8 +58,8 @@ private:
     bool is_active  = true;
     const IWindow* parent;
     //Tool* active_tool;
-    //std::unique_ptr<BarButton> activeTool;
-    BarButton* activeTool;
+    //std::unique_ptr<ABarButton> activeTool;
+    ABarButton* activeTool;
 
     vec2i CalcMouseShift();
 public:
@@ -161,10 +163,10 @@ public:
     virtual sfm::vec2i getMousePosition() const;
     virtual bool isPressed() const;
 
-    virtual void setActiveTool(BarButton* tool) {
+    virtual void setActiveTool(ABarButton* tool) {
         activeTool = tool;
     }
-    virtual BarButton* getActiveTool() {
+    virtual ABarButton* getActiveTool() {
         return activeTool;
     }
 

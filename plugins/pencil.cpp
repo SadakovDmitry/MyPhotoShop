@@ -7,135 +7,65 @@
 #include <dlfcn.h>
 
 namespace psapi {
-    typedef IWindowContainer* (*RootWindow)();
 
-    IWindowContainer* getRootWindowptr() {
-        void* photoshopLib = dlopen("/Users/dima/MIPT/SecondSem/MyPaint/Standard/libimplementation.dylib", RTLD_LAZY);
-        if (!photoshopLib) {
-            std::cerr << "Failed to load photoshop dylib in pencil: " << dlerror() << "\n";
-        }
-        RootWindow getRootWindowlib = reinterpret_cast<RootWindow>(dlsym(photoshopLib, "getRootWindow"));
-        if (!getRootWindowlib) {
-            std::cerr << "Failed to locate functions in photoshop dylib in pencil: " << dlerror() << "\n";
-            dlclose(photoshopLib);
-        }
-        if (!getRootWindowlib()) {
-            std::cerr << "Failed to initialize photoshop in pencil.\n";
-            dlclose(photoshopLib);
-        }
-        //std::cerr << "Photoshop loaded successfully action!\n";
-        //std::cerr << "action: " << getRootWindowlib() << "\n";
-        return getRootWindowlib();
-    }
-
-    void ABarButton::draw(IRenderWindow* renderWindow) {   // different sprites for each state
-        //std::cout << "draw button\n";
-        renderWindow->draw(&sprite);
-        switch (getState()) {
-            case State::Hover:
-                // std::cout << "Hover button\n";
-                renderWindow->draw(&sprite);
-                break;
-            case State::Press:
-                // std::cout << "Press button\n";
-                renderWindow->draw(&sprite);
-                break;
-            case State::Released:
-                // std::cout << "Released button\n";
-                renderWindow->draw(&sprite);
-                break;
-            case State::Normal:
-                // std::cout << "Normal button\n";
-            default:
-                // std::cout << "default button\n";
-                renderWindow->draw(&sprite);
-                break;
-        }
-    }
-
-    bool ABarButton::update(const IRenderWindow* renderWindow, const Event& event) {
-        vec2i mousePos = sfm::vec2i(event.mouseButton.x, event.mouseButton.y);
-
-        if (event.type == Event::MouseMoved) {
-            if (mousePos.x >= getPos().x && mousePos.x <= getPos().x + getSize().x &&
-                mousePos.y >= getPos().y && mousePos.y <= getPos().y + getSize().y) {
-                setState(ABarButton::State::Hover);
-            } else {
-                setState(ABarButton::State::Normal);
-            }
-            return true;
-        }
-
-        if (event.type == Event::MouseButtonPressed) {
-            if (mousePos.x >= getPos().x && mousePos.x <= getPos().x + getSize().x &&
-                mousePos.y >= getPos().y && mousePos.y <= getPos().y + getSize().y) {
-                setState(ABarButton::State::Press);
-                return true;
+    void ColorPaletteWindow::action() {
+        Canvas* canvas = static_cast<Canvas*>(getRootWindow()->getWindowById(kCanvasWindowId));
+        //ILayer* temp_layer = canvas->getTempLayer();
+        vec2i mouse_pos = canvas->getMousePosition();
+        vec2u rel_pos = {static_cast<unsigned int>(mouse_pos.x + canvas->layer_pos.x - pos.x), static_cast<unsigned int>(mouse_pos.y + canvas->layer_pos.y - pos.y)};
+        // std::cout << "start acton\n";
+        if (this->getState() == ABarButton::State::Press) {
+            // std::cout << "acton\n";
+            if (this->isActive()) {
+                selectedColor = image.getPixel(rel_pos);
+                is_active = false;
+                // std::cout << "color: " << selectedColor.r << " " << selectedColor.g << " " <<  selectedColor.b << "\n";
             }
         }
+    }
 
-        if (event.type == Event::MouseButtonReleased) {
-            if (mousePos.x >= getPos().x && mousePos.x <= getPos().x + getSize().x &&
-                mousePos.y >= getPos().y && mousePos.y <= getPos().y + getSize().y) {
-                setState(ABarButton::State::Released);
-                return true;
+    sfm::Color ColorPaletteWindow::getColor() {
+        return selectedColor;
+    }
+
+    void ColorPaletteWindow::setColor(sfm::Color col) {
+        selectedColor = col;
+    }
+
+
+    void ChoiceThicknessWindow::action() {
+        Canvas* canvas = static_cast<Canvas*>(getRootWindow()->getWindowById(kCanvasWindowId));
+        //ILayer* temp_layer = canvas->getTempLayer();
+        vec2i mouse_pos = canvas->getMousePosition();
+        vec2i rel_pos = {mouse_pos.x + canvas->layer_pos.x - pos.x, mouse_pos.y + canvas->layer_pos.y - pos.y};
+        // std::cout << "rel pos: " << rel_pos.x << " " << rel_pos.y << "\n";
+        // std::cout << "rel pos: " << mouse_pos.x << " " << mouse_pos.y << "\n";
+        // std::cout << "rel pos: " << pos.x << " " << pos.y << "\n\n";
+        // std::cout << "start acton\n";
+        if (this->getState() == ABarButton::State::Press) {
+            // std::cout << "acton\n";
+            if (this->isActive()) {
+                thickness = static_cast<size_t>(rel_pos.x);
+                // std::cout << thickness << "\n";
+                // std::cout << "color: " << selectedColor.r << " " << selectedColor.g << " " <<  selectedColor.b << "\n";
             }
         }
-
-        return false;
     }
 
-    wid_t ABarButton::getId() const {
-        return id;
+    size_t ChoiceThicknessWindow::getThickness() {
+        return thickness;
     }
 
-    IWindow* ABarButton::getWindowById(wid_t id) {
-        if (this->id == id) {
-            return this;
-        }
-        return nullptr;
+    void ChoiceThicknessWindow::setThickness(size_t thickness_) {
+        thickness = thickness_;
     }
 
-    const IWindow* ABarButton::getWindowById(wid_t id) const {
-        if (this->id == id) {
-            return this;
-        }
-        return nullptr;
-    }
 
-    vec2i ABarButton::getPos() const {
-        return pos;
-    }
 
-    vec2u ABarButton::getSize() const {
-        return size;
-    }
-
-    void ABarButton::setParent(const IWindow* parent) {
-       this->parent = parent;
-    }
-
-    void ABarButton::forceActivate() {is_active = false;}
-
-    void ABarButton::forceDeactivate() {is_active = false;}
-
-    bool ABarButton::isActive() const { return is_active == true; }
-
-    bool ABarButton::isWindowContainer() const {
-        return false;
-    }
-
-    void ABarButton::setState(ABarButton::State state) {
-        this->state = state;
-    }
-
-    ABarButton::State ABarButton::getState() const {
-        return state;
-    }
 
 
     void PencilTool::action() {
-        ICanvas* canvas = static_cast<ICanvas*>(getRootWindow()->getWindowById(kCanvasWindowId));
+        Canvas* canvas = static_cast<Canvas*>(getRootWindow()->getWindowById(kCanvasWindowId));
         ILayer* temp_layer = canvas->getTempLayer();
         vec2i mouse_pos    = canvas->getMousePosition();
         vec2i canvas_pos   = canvas->getPos();
@@ -145,7 +75,8 @@ namespace psapi {
         //     temp_layer->setPixel(mouse_pos, {0, 255, 0, 255});
         // }
             //std::cout << "pencil" << mouse_pos.x << ", " << mouse_pos.y << "\n";
-
+            colorPalette->action();
+            thicknessWindow->action();
             if (points_arr.size() < 4) {
                 points_arr.push_back(mouse_pos);
             } else {
@@ -154,10 +85,36 @@ namespace psapi {
     	        for (double t = 0; t <= 1; t += 0.001) {
                     vec2i point = (*this)(t + 1);
                     if (canvas->isPressed()) {
-                        temp_layer->setPixel(point, {0, 255, 0, 255});
+                        int radius = static_cast<int>(thicknessWindow->getThickness()) / 2;
+                        for (int i = radius * -1; i < radius; i++) {
+                            for (int j = radius * -1; j < radius; j++) {
+                                if (i * i + j * j <= radius * radius / 4) {
+                                    vec2i temp_point = {point.x + i, point.y + j};
+                                    temp_layer->setPixel(temp_point, colorPalette->getColor());
+                                }
+                            }
+                        }
+                        //temp_layer->setPixel(point, colorPalette->getColor());
                     }
     	        }
             }
+            if (this->getState() == ABarButton::State::Press) {
+                if (!colorPalette->isActive()) {
+                    colorPalette->forceActivate();
+                    thicknessWindow->forceActivate();
+                } else {
+                    colorPalette->forceDeactivate();
+                    thicknessWindow->forceDeactivate();
+                }
+            }
+    }
+
+    sfm::Color PencilTool::getColor() {
+        return color;
+    }
+
+    void PencilTool::setColor(sfm::Color col) {
+        color = col;
     }
 
     double PencilTool::CatmullRom(double p0, double p1, double p2, double p3, double t){
@@ -193,12 +150,24 @@ namespace psapi {
 
     extern "C" {
         __attribute__((visibility("default"))) bool loadPlugin() {
+            ChildInfo info_palette;
+            info_palette.pos = {105, 5};
+            info_palette.size = {150, 150};
+            auto palette = std::make_unique<ColorPaletteWindow>(info_palette.pos, info_palette.size, 200);
+            ChildInfo info_thicknessWindow;
+            info_thicknessWindow.pos = {255, 5};
+            info_thicknessWindow.size = {100, 50};
+            auto thicknessWindow = std::make_unique<ChoiceThicknessWindow>(info_thicknessWindow.pos, info_thicknessWindow.size, 201);
+
             auto toolbar = static_cast<IBar*>(getRootWindow()->getWindowById(kToolBarWindowId));
             ChildInfo info = toolbar->getNextChildInfo();
-            auto pencil = std::make_unique<PencilTool>(info.pos, info.size, 1);
+            auto pencil = std::make_unique<PencilTool>(info.pos, info.size, 1, palette.get(), thicknessWindow.get());
 
             if (toolbar) {
                 toolbar->addWindow(std::move(pencil));
+                getRootWindow()->addWindow(std::move(palette));
+                getRootWindow()->addWindow(std::move(thicknessWindow));
+                // toolbar->addWindow(std::move(palette));
                 return true;
             }
             assert(toolbar);

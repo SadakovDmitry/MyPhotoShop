@@ -236,6 +236,271 @@ std::unique_ptr<IRenderWindow> RenderWindow::create(unsigned int width, unsigned
     return std::make_unique<RenderWindow>(width, height, name);
 }
 
+//
+// class RectangleShape : public IRectangleShape, public sf::RectangleShape {
+// public:
+//     explicit RectangleShape(const vec2u& size)
+//         : sf::RectangleShape(sf::Vector2f(size.x, size.y)) {}
+//
+//     void setTexture(const ITexture* texture) override {
+//         // Приведение типа необходимо для работы с интерфейсом ITexture
+//         const sf::Texture* sfmlTexture = dynamic_cast<const sf::Texture*>(texture);
+//         if (sfmlTexture) {
+//             sf::RectangleShape::setTexture(sfmlTexture);
+//         }
+//     }
+//
+//     void setFillColor(const Color& color) override {
+//         sf::RectangleShape::setFillColor(sf::Color(color.r, color.g, color.b, color.a));
+//     }
+//
+//     void setPosition(const vec2i& pos) override {
+//         sf::RectangleShape::setPosition(static_cast<float>(pos.x), static_cast<float>(pos.y));
+//     }
+//
+//     void setPosition(const vec2f& pos) override {
+//         sf::RectangleShape::setPosition(pos.x, pos.y);
+//     }
+//
+//     void setPosition(const vec2d& pos) override {
+//         sf::RectangleShape::setPosition(static_cast<float>(pos.x), static_cast<float>(pos.y));
+//     }
+//
+//     void setScale(const vec2f& scale) override {
+//         sf::RectangleShape::setScale(scale.x, scale.y);
+//     }
+//
+//     void setSize(const vec2u& size) override {
+//         sf::RectangleShape::setSize(sf::Vector2f(size.x, size.y));
+//     }
+//
+//     void setRotation(float angle) override {
+//         sf::RectangleShape::setRotation(angle);
+//     }
+//
+//     void setOutlineColor(const Color& color) override {
+//         sf::RectangleShape::setOutlineColor(sf::Color(color.r, color.g, color.b, color.a));
+//     }
+//
+//     void setOutlineThickness(float thickness) override {
+//         sf::RectangleShape::setOutlineThickness(thickness);
+//     }
+//
+//     float getRotation() const override {
+//         return sf::RectangleShape::getRotation();
+//     }
+//
+//     vec2f getScale() const override {
+//         sf::Vector2f scale = sf::RectangleShape::getScale();
+//         return { scale.x, scale.y };
+//     }
+//
+//     vec2f getPosition() const override {
+//         sf::Vector2f pos = sf::RectangleShape::getPosition();
+//         return { pos.x, pos.y };
+//     }
+//
+//     const Color& getFillColor() const override {
+//         static Color color;
+//         sf::Color sfmlColor = sf::RectangleShape::getFillColor();
+//         color = { sfmlColor.r, sfmlColor.g, sfmlColor.b, sfmlColor.a };
+//         return color;
+//     }
+//
+//     vec2u getSize() const override {
+//         sf::Vector2f size = sf::RectangleShape::getSize();
+//         return { static_cast<unsigned int>(size.x), static_cast<unsigned int>(size.y) };
+//     }
+//
+//     float getOutlineThickness() const override {
+//         return sf::RectangleShape::getOutlineThickness();
+//     }
+//
+//     const Color& getOutlineColor() const override {
+//         static Color color;
+//         sf::Color sfmlColor = sf::RectangleShape::getOutlineColor();
+//         color = { sfmlColor.r, sfmlColor.g, sfmlColor.b, sfmlColor.a };
+//         return color;
+//     }
+//
+//     IImage getImage() const override {
+//         // Not implemented in SFML. Would require rendering to a texture and extracting the image.
+//         throw std::runtime_error("getImage not implemented.");
+//     }
+//
+//     void move(const vec2f& offset) override {
+//         sf::RectangleShape::move(offset.x, offset.y);
+//     }
+//
+//     static std::unique_ptr<IRectangleShape> create(const vec2u& size = vec2u(0, 0)) {
+//         return std::make_unique<RectangleShape>(size);
+//     }
+// };
+
+    void EllipseShape::draw(IRenderWindow* window) const{
+        // Преобразуем IRenderWindow в sf::RenderWindow для рисования
+        sf::RenderWindow* sfWindow = dynamic_cast<sf::RenderWindow*>(window);
+        if (sfWindow) {
+            sfWindow->draw(*this);
+        }
+    }
+
+    void EllipseShape::setTexture(const ITexture* texture) {
+        const sf::Texture* sfmlTexture = dynamic_cast<const sf::Texture*>(texture);
+        if (sfmlTexture) {
+            sf::CircleShape::setTexture(sfmlTexture);
+        }
+    }
+
+    void EllipseShape::setFillColor(const Color& color) {
+        sf::CircleShape::setFillColor(sf::Color(color.r, color.g, color.b, color.a));
+    }
+
+    void EllipseShape::setPosition(const vec2i& pos) {
+        sf::CircleShape::setPosition(static_cast<float>(pos.x), static_cast<float>(pos.y));
+    }
+
+    void EllipseShape::setPosition(const vec2f& pos) {
+        sf::CircleShape::setPosition(pos.x, pos.y);
+    }
+
+    void EllipseShape::setPosition(const vec2d& pos) {
+        sf::CircleShape::setPosition(static_cast<float>(pos.x), static_cast<float>(pos.y));
+    }
+
+    void EllipseShape::setScale(const vec2f& scale) {
+        sf::CircleShape::setScale(scale.x, scale.y);
+    }
+
+    void EllipseShape::setSize(const vec2u& size) {
+        sf::CircleShape::setScale(1.0f, static_cast<float>(size.y) / size.x);
+        sf::CircleShape::setRadius(size.x / 2.0f);
+    }
+
+    void EllipseShape::setRotation(float angle) {
+        sf::CircleShape::setRotation(angle);
+    }
+
+    void EllipseShape::setOutlineColor(const Color& color) {
+        sf::CircleShape::setOutlineColor(sf::Color(color.r, color.g, color.b, color.a));
+    }
+
+    void EllipseShape::setOutlineThickness(float thickness) {
+        sf::CircleShape::setOutlineThickness(thickness);
+    }
+
+    float EllipseShape::getRotation() const {
+        return sf::CircleShape::getRotation();
+    }
+
+    vec2f EllipseShape::getScale() const {
+        sf::Vector2f scale = sf::CircleShape::getScale();
+        return { scale.x, scale.y };
+    }
+
+    vec2f EllipseShape::getPosition() const {
+        sf::Vector2f pos = sf::CircleShape::getPosition();
+        return { pos.x, pos.y };
+    }
+
+    const Color& EllipseShape::getFillColor() const {
+        static Color color;
+        sf::Color sfmlColor = sf::CircleShape::getFillColor();
+        color = { sfmlColor.r, sfmlColor.g, sfmlColor.b, sfmlColor.a };
+        return color;
+    }
+
+    vec2u EllipseShape::getSize() const {
+        float diameter = sf::CircleShape::getRadius() * 2;
+        return { static_cast<unsigned int>(diameter), static_cast<unsigned int>(diameter) };
+    }
+
+    float EllipseShape::getOutlineThickness() const {
+        return sf::CircleShape::getOutlineThickness();
+    }
+
+    const Color& EllipseShape::getOutlineColor() const {
+        static Color color;
+        sf::Color sfmlColor = sf::CircleShape::getOutlineColor();
+        color = { sfmlColor.r, sfmlColor.g, sfmlColor.b, sfmlColor.a };
+        return color;
+    }
+
+    IImage EllipseShape::getImage() const {
+        throw std::runtime_error("getImage not implemented.");
+    }
+
+    void EllipseShape::move(const vec2f& offset) {
+        sf::CircleShape::move(offset.x, offset.y);
+    }
+
+    std::unique_ptr<IEllipseShape> EllipseShape::create(const vec2u& size) {
+        return std::make_unique<EllipseShape>(size);
+    }
+
+    std::unique_ptr<IEllipseShape> EllipseShape::create(unsigned int radius) {
+        return std::make_unique<EllipseShape>(radius);
+    }
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+//                                                                         Image
+//-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+    void Image::create(unsigned int width, unsigned int height, const Color &color) {
+        sf::Color sfColor(color.r, color.g, color.b, color.a);
+        image.create(width, height, sfColor);
+    }
+
+    void Image::create(vec2u size, const Color &color) {
+        create(size.x, size.y, color);
+    }
+
+    void Image::create(unsigned int width, unsigned int height, const Color *pixels) {
+        std::vector<sf::Uint8> pixelData(width * height * 4);
+        for (unsigned int i = 0; i < width * height; ++i) {
+            pixelData[i * 4 + 0] = pixels[i].r;
+            pixelData[i * 4 + 1] = pixels[i].g;
+            pixelData[i * 4 + 2] = pixels[i].b;
+            pixelData[i * 4 + 3] = pixels[i].a;
+        }
+        image.create(width, height, pixelData.data());
+    }
+
+    void Image::create(vec2u size, const Color *pixels) {
+        create(size.x, size.y, pixels);
+    }
+
+    bool Image::loadFromFile(const std::string &filename) {
+        return image.loadFromFile(filename);
+    }
+
+    vec2u Image::getSize() const {
+        sf::Vector2u size = image.getSize();
+        return {size.x, size.y};
+    }
+
+    void Image::setPixel(unsigned int x, unsigned int y, const Color &color) {
+        sf::Color sfColor(color.r, color.g, color.b, color.a);
+        image.setPixel(x, y, sfColor);
+    }
+
+    void Image::setPixel(vec2u pos, const Color &color) {
+        setPixel(pos.x, pos.y, color);
+    }
+
+    Color Image::getPixel(unsigned int x, unsigned int y) const {
+        sf::Color sfColor = image.getPixel(x, y);
+        return Color(sfColor.r, sfColor.g, sfColor.b, sfColor.a);
+    }
+
+    Color Image::getPixel(vec2u pos) const {
+        return getPixel(pos.x, pos.y);
+    }
+
+    std::unique_ptr<IImage> Image::create() {
+        return std::make_unique<Image>();
+    }
+
 //-----------------------------------------------------------------------------------------------------------------------------------------------------------------
 //                                                                         Mouse
 //-----------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -526,7 +791,7 @@ bool Keyboard::isKeyPressed(Key key) {
     ITexture& Texture::operator=(const ITexture& right) {
         const Texture* textureRight = dynamic_cast<const Texture*>(&right);
         if (textureRight) {
-            texture = textureRight->texture;  // Копируем текстуру
+            texture = textureRight->texture;
         }
         return *this;
     }

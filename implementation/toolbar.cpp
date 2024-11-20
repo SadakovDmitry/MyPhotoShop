@@ -1,16 +1,15 @@
 #include "my_sfm.hpp"
 #include "toolbar.hpp"
-#include "canvas.hpp"
 #include <assert.h>
 #include <dlfcn.h>
-
+#include "canvas.hpp"
 namespace psapi {
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------------------------
-//                                                                         BarButton
+//                                                                         ABarButton
 //-----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-    void BarButton::draw(IRenderWindow* renderWindow) {   // different sprites for each state
+    void ABarButton::draw(IRenderWindow* renderWindow) {   // different sprites for each state
         //std::cout << "draw button\n";
         renderWindow->draw(&sprite);
         switch (getState()) {
@@ -35,15 +34,15 @@ namespace psapi {
         }
     }
 
-    bool BarButton::update(const IRenderWindow* renderWindow, const Event& event) {
+    bool ABarButton::update(const IRenderWindow* renderWindow, const Event& event) {
         vec2i mousePos = sfm::vec2i(event.mouseButton.x, event.mouseButton.y);
 
         if (event.type == Event::MouseMoved) {
             if (mousePos.x >= getPos().x && mousePos.x <= getPos().x + getSize().x &&
                 mousePos.y >= getPos().y && mousePos.y <= getPos().y + getSize().y) {
-                setState(BarButton::State::Hover);
+                setState(ABarButton::State::Hover);
             } else {
-                setState(BarButton::State::Normal);
+                setState(ABarButton::State::Normal);
             }
             return true;
         }
@@ -51,7 +50,7 @@ namespace psapi {
         if (event.type == Event::MouseButtonPressed) {
             if (mousePos.x >= getPos().x && mousePos.x <= getPos().x + getSize().x &&
                 mousePos.y >= getPos().y && mousePos.y <= getPos().y + getSize().y) {
-                setState(BarButton::State::Press);
+                setState(ABarButton::State::Press);
                 return true;
             }
         }
@@ -59,7 +58,7 @@ namespace psapi {
         if (event.type == Event::MouseButtonReleased) {
             if (mousePos.x >= getPos().x && mousePos.x <= getPos().x + getSize().x &&
                 mousePos.y >= getPos().y && mousePos.y <= getPos().y + getSize().y) {
-                setState(BarButton::State::Released);
+                setState(ABarButton::State::Released);
                 return true;
             }
         }
@@ -67,51 +66,51 @@ namespace psapi {
         return false;
     }
 
-    wid_t BarButton::getId() const {
+    wid_t ABarButton::getId() const {
         return id;
     }
 
-    IWindow* BarButton::getWindowById(wid_t id) {
+    IWindow* ABarButton::getWindowById(wid_t id) {
         if (this->id == id) {
             return this;
         }
         return nullptr;
     }
 
-    const IWindow* BarButton::getWindowById(wid_t id) const {
+    const IWindow* ABarButton::getWindowById(wid_t id) const {
         if (this->id == id) {
             return this;
         }
         return nullptr;
     }
 
-    vec2i BarButton::getPos() const {
+    vec2i ABarButton::getPos() const {
         return pos;
     }
 
-    vec2u BarButton::getSize() const {
+    vec2u ABarButton::getSize() const {
         return size;
     }
 
-    void BarButton::setParent(const IWindow* parent) {
+    void ABarButton::setParent(const IWindow* parent) {
        this->parent = parent;
     }
 
-    void BarButton::forceActivate() {is_active = false;}
+    void ABarButton::forceActivate() {is_active = true;}
 
-    void BarButton::forceDeactivate() {is_active = false;}
+    void ABarButton::forceDeactivate() {is_active = false;}
 
-    bool BarButton::isActive() const { return is_active == true; }
+    bool ABarButton::isActive() const { return is_active == true; }
 
-    bool BarButton::isWindowContainer() const {
+    bool ABarButton::isWindowContainer() const {
         return false;
     }
 
-    void BarButton::setState(BarButton::State state) {
+    void ABarButton::setState(ABarButton::State state) {
         this->state = state;
     }
 
-    BarButton::State BarButton::getState() const {
+    ABarButton::State ABarButton::getState() const {
         return state;
     }
 
@@ -134,9 +133,12 @@ void ToolBar::draw(IRenderWindow* renderWindow) {
 bool ToolBar::update(const IRenderWindow* renderWindow, const Event& event) {
     for (auto& button : toolbar) {
         if (button->update(renderWindow, event)) {
-            if (button->getState() == BarButton::State::Press) {
+            if (button->getState() == ABarButton::State::Press) {
                 Canvas* canvas = static_cast<Canvas*>(getRootWindow()->getWindowById(psapi::kCanvasWindowId));
-                canvas->setActiveTool(static_cast<BarButton*>(button.get()));
+                canvas->setActiveTool(static_cast<ABarButton*>(button.get()));
+                if(canvas->getActiveTool()) {
+                    canvas->getActiveTool()->action();
+                }
             }
             return true;
         }
@@ -202,7 +204,7 @@ ChildInfo ToolBar::getNextChildInfo() const {
 }
 
 void ToolBar::finishButtonDraw(IRenderWindow* renderWindow, const IBarButton* button) const {
-    // renderWindow->draw(reinterpret_cast<const sfm::Drawable*>(&(static_cast<const BarButton*>(button)->sprite)));
+    // renderWindow->draw(reinterpret_cast<const sfm::Drawable*>(&(static_cast<const ABarButton*>(button)->sprite)));
 }
 
 }

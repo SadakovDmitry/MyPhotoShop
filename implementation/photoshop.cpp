@@ -61,8 +61,11 @@ bool IWindowVector::isWindowContainer() const {
 RootWindow::RootWindow() = default;
 
 void RootWindow::draw(IRenderWindow* renderWindow) {
+    renderWindow->clear();
     for (const auto& window : windows_) {
-        window->draw(renderWindow);
+        if (window->isActive()) {
+            window->draw(renderWindow);
+        }
     }
 }
 

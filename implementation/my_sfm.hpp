@@ -34,6 +34,185 @@ public:
     static std::unique_ptr<IRenderWindow> create(unsigned int width, unsigned int height, const std::string& name);
 };
 
+
+class Image : public IImage {
+    sf::Image image;
+public:
+    virtual ~Image() = default;
+
+    virtual void create(unsigned int width, unsigned int height, const Color &color=Color(0, 0, 0));
+    virtual void create(vec2u size, const Color &color=Color(0, 0, 0));
+
+    virtual void create(unsigned int width, unsigned int height, const Color *pixels);
+    virtual void create(vec2u size, const Color *pixels);
+
+    virtual bool loadFromFile(const std::string &filename);
+
+    virtual vec2u getSize() const;
+    virtual void setPixel(unsigned int x, unsigned int y, const Color &color);
+    virtual void setPixel(vec2u pos, const Color &color);
+
+    virtual Color getPixel(unsigned int x, unsigned int y) const;
+    virtual Color getPixel(vec2u pos) const;
+
+    static std::unique_ptr<IImage> create();
+};
+//
+// class RectangleShape : public IRectangleShape, public sf::RectangleShape {
+// public:
+//     explicit RectangleShape(const vec2u& size)
+//         : sf::RectangleShape(sf::Vector2f(size.x, size.y)) {}
+//
+//     void setTexture(const ITexture* texture) override {
+//         // Приведение типа необходимо для работы с интерфейсом ITexture
+//         const sf::Texture* sfmlTexture = dynamic_cast<const sf::Texture*>(texture);
+//         if (sfmlTexture) {
+//             sf::RectangleShape::setTexture(sfmlTexture);
+//         }
+//     }
+//
+//     void setFillColor(const Color& color) override {
+//         sf::RectangleShape::setFillColor(sf::Color(color.r, color.g, color.b, color.a));
+//     }
+//
+//     void setPosition(const vec2i& pos) override {
+//         sf::RectangleShape::setPosition(static_cast<float>(pos.x), static_cast<float>(pos.y));
+//     }
+//
+//     void setPosition(const vec2f& pos) override {
+//         sf::RectangleShape::setPosition(pos.x, pos.y);
+//     }
+//
+//     void setPosition(const vec2d& pos) override {
+//         sf::RectangleShape::setPosition(static_cast<float>(pos.x), static_cast<float>(pos.y));
+//     }
+//
+//     void setScale(const vec2f& scale) override {
+//         sf::RectangleShape::setScale(scale.x, scale.y);
+//     }
+//
+//     void setSize(const vec2u& size) override {
+//         sf::RectangleShape::setSize(sf::Vector2f(size.x, size.y));
+//     }
+//
+//     void setRotation(float angle) override {
+//         sf::RectangleShape::setRotation(angle);
+//     }
+//
+//     void setOutlineColor(const Color& color) override {
+//         sf::RectangleShape::setOutlineColor(sf::Color(color.r, color.g, color.b, color.a));
+//     }
+//
+//     void setOutlineThickness(float thickness) override {
+//         sf::RectangleShape::setOutlineThickness(thickness);
+//     }
+//
+//     float getRotation() const override {
+//         return sf::RectangleShape::getRotation();
+//     }
+//
+//     vec2f getScale() const override {
+//         sf::Vector2f scale = sf::RectangleShape::getScale();
+//         return { scale.x, scale.y };
+//     }
+//
+//     vec2f getPosition() const override {
+//         sf::Vector2f pos = sf::RectangleShape::getPosition();
+//         return { pos.x, pos.y };
+//     }
+//
+//     const Color& getFillColor() const override {
+//         static Color color;
+//         sf::Color sfmlColor = sf::RectangleShape::getFillColor();
+//         color = { sfmlColor.r, sfmlColor.g, sfmlColor.b, sfmlColor.a };
+//         return color;
+//     }
+//
+//     vec2u getSize() const override {
+//         sf::Vector2f size = sf::RectangleShape::getSize();
+//         return { static_cast<unsigned int>(size.x), static_cast<unsigned int>(size.y) };
+//     }
+//
+//     float getOutlineThickness() const override {
+//         return sf::RectangleShape::getOutlineThickness();
+//     }
+//
+//     const Color& getOutlineColor() const override {
+//         static Color color;
+//         sf::Color sfmlColor = sf::RectangleShape::getOutlineColor();
+//         color = { sfmlColor.r, sfmlColor.g, sfmlColor.b, sfmlColor.a };
+//         return color;
+//     }
+//
+//     IImage getImage() const override {
+//         // Not implemented in SFML. Would require rendering to a texture and extracting the image.
+//         throw std::runtime_error("getImage not implemented.");
+//     }
+//
+//     void move(const vec2f& offset) override {
+//         sf::RectangleShape::move(offset.x, offset.y);
+//     }
+//
+//     static std::unique_ptr<IRectangleShape> create(const vec2u& size = vec2u(0, 0)) {
+//         return std::make_unique<RectangleShape>(size);
+//     }
+// };
+
+class EllipseShape : public IEllipseShape, public sf::CircleShape {
+public:
+    explicit EllipseShape(const vec2u& size)
+        : sf::CircleShape(size.x / 2.0f) {
+        sf::CircleShape::setScale(1.0f, static_cast<float>(size.y) / size.x);
+    }
+
+    explicit EllipseShape(unsigned int radius)
+        : sf::CircleShape(radius) {}
+
+    virtual void draw(IRenderWindow* window) const override;
+
+    virtual void setTexture(const ITexture* texture) override;
+
+    virtual void setFillColor(const Color& color) override;
+
+    virtual void setPosition(const vec2i& pos) override;
+
+    virtual void setPosition(const vec2f& pos) override;
+
+    virtual void setPosition(const vec2d& pos) override;
+
+    virtual void setScale(const vec2f& scale) override;
+
+    virtual void setSize(const vec2u& size) override;
+
+    virtual void setRotation(float angle) override;
+
+    virtual void setOutlineColor(const Color& color) override;
+
+    virtual void setOutlineThickness(float thickness) override;
+
+    virtual float getRotation() const override;
+
+    virtual vec2f getScale() const override;
+
+    virtual vec2f getPosition() const override;
+
+    virtual const Color& getFillColor() const override;
+
+    virtual vec2u getSize() const override;
+
+    virtual float getOutlineThickness() const override;
+
+    virtual const Color& getOutlineColor() const override;
+
+    virtual IImage getImage() const override;
+
+    virtual void move(const vec2f& offset) override;
+
+    static std::unique_ptr<IEllipseShape> create(const vec2u& size = vec2u(0, 0));
+
+    static std::unique_ptr<IEllipseShape> create(unsigned int radius);
+};
+
 class Texture : public ITexture {
 public:
     sf::Texture texture;

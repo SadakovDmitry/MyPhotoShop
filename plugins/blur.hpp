@@ -1,5 +1,5 @@
-#ifndef ERASER_HPP
-#define ERASER_HPP
+#ifndef TOOLBAR_HPP
+#define TOOLBAR_HPP
 
 //#include "api_photoshop.hpp"
 #include "/Users/dima/MIPT/SecondSem/MyPaint/Standard/api_bar.hpp"
@@ -19,11 +19,13 @@ namespace psapi {
 // const wid_t kToolBarWindowId    = 101;
 // const wid_t kOptionsBarWindowId = 102;
 
-class SprayerTool : public ABarButton {
+class BlurTool : public ABarButton {
+private:
+    std::vector<vec2i> points_arr;
 public:
-    SprayerTool(vec2i pos_, vec2u size_, wid_t id_)
-        : ABarButton(pos_, size_, id_) {
-        if (!texture.loadFromFile("/Users/dima/MIPT/SecondSem/MyPaint/source/Sprayer.jpg")) {
+    BlurTool(vec2i pos_, vec2u size_, wid_t id_)
+        : ABarButton(pos_, size_, id_),  points_arr() {
+        if (!texture.loadFromFile("/Users/dima/MIPT/SecondSem/MyPaint/source/Button_3.png")) {
              std::cerr << "Error opening file\n";
         }
         sprite.setTexture(&texture);
@@ -35,7 +37,12 @@ public:
 
     virtual void action() override ;
 
-    virtual ~SprayerTool() = default;
+    double CatmullRom(double p0, double p1, double p2, double p3, double t);
+    vec2i operator() (double t);
+    std::vector<std::vector<double>> generateGaussKernel(int radius, double sigma);
+    sfm::Color applyGaussianBlur(int x, int y, Canvas* canvas, const std::vector<std::vector<double>>& kernel);
+
+    virtual ~BlurTool() = default;
 };
 
 extern "C" {

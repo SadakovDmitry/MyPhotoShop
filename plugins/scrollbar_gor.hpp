@@ -16,54 +16,6 @@
 
 namespace psapi {
 
-class ABarButton : public IBarButton {
-protected:
-    friend class ScrollBar;
-    wid_t id;
-    bool is_active = true;
-    sfm::Sprite sprite;
-    sfm::Texture texture;
-    vec2u size;
-    vec2i pos;
-    vec2f scale;
-    State state;
-    const IWindow* parent;
-public:
-    ABarButton(vec2i pos_, vec2u size_, wid_t id_) : id(id_), is_active(true), pos(pos_), size(size_), scale(vec2f(1, 1)), parent(nullptr) {}
-    ABarButton() = default;
-
-    virtual ~ABarButton() = default;
-
-    virtual void draw(IRenderWindow* renderWindow) override;
-
-    virtual bool update(const IRenderWindow* renderWindow, const Event& event) override;
-
-    virtual wid_t getId() const override;
-
-    virtual IWindow* getWindowById(wid_t id) override;
-
-    virtual const IWindow* getWindowById(wid_t id) const override;
-
-    virtual vec2i getPos() const override;
-
-    virtual vec2u getSize() const override;
-
-    virtual void setParent(const IWindow* parent) override;
-
-    virtual void forceActivate() override;
-
-    virtual void forceDeactivate() override;
-
-    virtual bool isActive() const override;
-
-    virtual bool isWindowContainer() const override;
-
-    virtual void setState(State state) override;
-    virtual State getState() const override;
-
-    virtual void action() = 0;
-};
-
 class ScrollBarHor : public IBar {
 private:
     friend class ScrollBar;
@@ -88,7 +40,7 @@ public:
         sprite.setScale(1, 1);
         sprite.setColor(sfm::Color(170, 170, 170, 255));
         sprite.setPosition(pos.x, pos.y);
-    }
+        }
     ~ScrollBarHor() = default;
 
     virtual void draw(IRenderWindow* renderWindow);

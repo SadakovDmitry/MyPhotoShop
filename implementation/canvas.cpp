@@ -1,5 +1,4 @@
 #include "canvas.hpp"
-#include "/Users/dima/MIPT/SecondSem/MyPaint/Standard/api_sfm.hpp"
 
 namespace psapi {
 
@@ -18,7 +17,7 @@ namespace psapi {
     sfm::Color Layer::getPixel(sfm::vec2i pix_pos) const {
         if (pix_pos.x < size.x && pix_pos.y < size.y &&
             pix_pos.x > 0      && pix_pos.y > 0        ) {
-            return pix_arr[pos.x + pix_pos.y * size.x];
+            return pix_arr[pix_pos.x + pix_pos.y * size.x];
         }
         return sfm::Color(0, 0, 0, 0);
     }
@@ -82,11 +81,25 @@ namespace psapi {
     }
 
     bool Canvas::update(const IRenderWindow* renderWindow, const Event& event) {
+
+        if (sfm::Keyboard::isKeyPressed(sfm::Keyboard::Key::U)) {
+            for (int i = 0; i < layer_size.x; i++) {
+                for (int j = 0; j < layer_size.y; j++) {
+                    ILayer* temp_layer = this->getTempLayer();
+                    sfm::Color col = temp_layer->getPixel({i, j});
+                    int k = -1;
+                    temp_layer->setPixel({i, j}, {static_cast<uint8_t>((col.r - 255) * k),
+                                                  static_cast<uint8_t>((col.g - 255) * k),
+                                                  static_cast<uint8_t>((col.b - 255) * k),
+                                                  255});
+                }
+            }
+        }
         if (event.type == Event::MouseMoved) {
             mouse_pos = sfm::vec2i(event.mouseMove.x - layer_pos.x, event.mouseMove.y - layer_pos.y);
 
-            if (mouse_pos.x >= 0 && mouse_pos.x <= layer_size.x &&
-                mouse_pos.y >= 0 && mouse_pos.y <= layer_size.y) {
+            if (mouse_pos.x + layer_pos.x >= pos.x && mouse_pos.x + layer_pos.x <= pos.x + size.x &&
+                mouse_pos.y + layer_pos.y >= pos.y && mouse_pos.y + layer_pos.y <= pos.y + size.y) {
                 return true;
             }
             return true;
@@ -94,8 +107,8 @@ namespace psapi {
         if (event.type == Event::MouseButtonPressed) {
             mouse_pos = sfm::vec2i(event.mouseButton.x - layer_pos.x, event.mouseButton.y - layer_pos.y);
 
-            if (mouse_pos.x >= 0 && mouse_pos.x <= layer_size.x &&
-                mouse_pos.y >= 0 && mouse_pos.y <= layer_size.y) {
+            if (mouse_pos.x + layer_pos.x >= pos.x && mouse_pos.x + layer_pos.x <= pos.x + size.x &&
+                mouse_pos.y + layer_pos.y >= pos.y && mouse_pos.y + layer_pos.y <= pos.y + size.y) {
                 is_pressed = true;
                 return true;
             }
@@ -105,8 +118,8 @@ namespace psapi {
         if (event.type == Event::MouseButtonReleased) {
             mouse_pos = sfm::vec2i(event.mouseButton.x - layer_pos.x, event.mouseButton.y - layer_pos.y);
 
-            if (mouse_pos.x >= 0 && mouse_pos.x <= layer_size.x &&
-                mouse_pos.y >= 0 && mouse_pos.y <= layer_size.y) {
+            if (mouse_pos.x + layer_pos.x >= pos.x && mouse_pos.x + layer_pos.x <= pos.x + size.x &&
+                mouse_pos.y + layer_pos.y >= pos.y && mouse_pos.y + layer_pos.y <= pos.y + size.y) {
                 is_pressed = false;
                 return true;
             }

@@ -9,8 +9,8 @@
 
 #include "/Users/dima/MIPT/SecondSem/MyPaint/Standard/api_photoshop.hpp"
 #include "/Users/dima/MIPT/SecondSem/MyPaint/Standard/api_bar.hpp"
-// #include "canvas.hpp"
 #include "my_sfm.hpp"
+#include "ABarButton.hpp"
 
 #include <cstdint>
 #include <memory>
@@ -22,72 +22,72 @@ namespace psapi {
 // const wid_t kToolBarWindowId    = 101;
 // const wid_t kOptionsBarWindowId = 102;
 
-class BarButton : public IBarButton {
-protected:
-    friend class ToolBar;
-    wid_t id;
-    bool is_active = true;
-    sfm::Sprite sprite;
-    sfm::Texture texture;
-    vec2u size;
-    vec2i pos;
-    vec2f scale;
-    State state;
-    const IWindow* parent;
-public:
-    //BarButton();
-    // BarButton(vec2i pos_, vec2u size_, wid_t id_) : id(id_), is_active(true), pos(pos_), size(size_), scale(vec2f(1, 1)), parent(nullptr) {
-    //     // if(!texture.loadFromFile("/Users/dima/MIPT/SecondSem/MyPaint/source/Pencil.png")) {
-    //     //     //throw std::runtime_error("ошибка открытия файла > " + file + "!");
-    //     // }
-    //     // sprite.setTexture(&texture);
-    //     // sprite.setTextureRect(sfm::IntRect(0, 0, 50, 50));
-    //     // sprite.setScale(1, 1);
-    //     // sprite.setColor(sfm::Color(255, 255, 255, 255));
-    //     // sprite.setPosition(5, 5);
-    // }
-    BarButton(vec2i pos_, vec2u size_, wid_t id_) : id(id_), is_active(true), pos(pos_), size(size_), scale(vec2f(1, 1)), parent(nullptr) {}
-    BarButton() = default;
+// class ABarButton : public IBarButton {
+// protected:
+//     friend class ToolBar;
+//     wid_t id;
+//     bool is_active = true;
+//     sfm::Sprite sprite;
+//     sfm::Texture texture;
+//     vec2u size;
+//     vec2i pos;
+//     vec2f scale;
+//     State state;
+//     const IWindow* parent;
+// public:
+//     //ABarButton();
+//     // ABarButton(vec2i pos_, vec2u size_, wid_t id_) : id(id_), is_active(true), pos(pos_), size(size_), scale(vec2f(1, 1)), parent(nullptr) {
+//     //     // if(!texture.loadFromFile("/Users/dima/MIPT/SecondSem/MyPaint/source/Pencil.png")) {
+//     //     //     //throw std::runtime_error("ошибка открытия файла > " + file + "!");
+//     //     // }
+//     //     // sprite.setTexture(&texture);
+//     //     // sprite.setTextureRect(sfm::IntRect(0, 0, 50, 50));
+//     //     // sprite.setScale(1, 1);
+//     //     // sprite.setColor(sfm::Color(255, 255, 255, 255));
+//     //     // sprite.setPosition(5, 5);
+//     // }
+//     ABarButton(vec2i pos_, vec2u size_, wid_t id_) : id(id_), is_active(true), pos(pos_), size(size_), scale(vec2f(1, 1)), parent(nullptr) {}
+//     ABarButton() = default;
+//
+//     virtual ~ABarButton() = default;
+//
+//     virtual void draw(IRenderWindow* renderWindow) override;
+//
+//     virtual bool update(const IRenderWindow* renderWindow, const Event& event) override;
+//
+//     virtual wid_t getId() const override;
+//
+//     virtual IWindow* getWindowById(wid_t id) override;
+//
+//     virtual const IWindow* getWindowById(wid_t id) const override;
+//
+//     virtual vec2i getPos() const override;
+//
+//     virtual vec2u getSize() const override;
+//
+//     virtual void setParent(const IWindow* parent) override;
+//
+//     virtual void forceActivate() override;
+//
+//     virtual void forceDeactivate() override;
+//
+//     virtual bool isActive() const override;
+//
+//     virtual bool isWindowContainer() const override;
+//
+//     virtual void setState(State state) override;
+//     virtual State getState() const override;
+//
+//     virtual void action() = 0;
+// };
 
-    virtual ~BarButton() = default;
-
-    virtual void draw(IRenderWindow* renderWindow) override;
-
-    virtual bool update(const IRenderWindow* renderWindow, const Event& event) override;
-
-    virtual wid_t getId() const override;
-
-    virtual IWindow* getWindowById(wid_t id) override;
-
-    virtual const IWindow* getWindowById(wid_t id) const override;
-
-    virtual vec2i getPos() const override;
-
-    virtual vec2u getSize() const override;
-
-    virtual void setParent(const IWindow* parent) override;
-
-    virtual void forceActivate() override;
-
-    virtual void forceDeactivate() override;
-
-    virtual bool isActive() const override;
-
-    virtual bool isWindowContainer() const override;
-
-    virtual void setState(State state) override;
-    virtual State getState() const override;
-
-    virtual void action() = 0;
-};
-
-// class PencilTool : public BarButton {
+// class PencilTool : public ABarButton {
 // private:
 //     // std::vector<Point> points_arr;
 //     std::vector<vec2i> points_arr;
 // public:
 //     PencilTool(vec2i pos_, vec2u size_, wid_t id_)
-//         : BarButton(pos_, size_, id_),  points_arr() {
+//         : ABarButton(pos_, size_, id_),  points_arr() {
 //         if (!texture.loadFromFile("/Users/dima/MIPT/SecondSem/MyPaint/source/Pencil.png")) {
 //              std::cerr << "Error opening file\n";
 //         }
@@ -108,10 +108,10 @@ public:
 //     virtual ~PencilTool() = default;
 // };
 //
-// class SprayerTool : public BarButton {
+// class SprayerTool : public ABarButton {
 // public:
 //     SprayerTool(vec2i pos_, vec2u size_, wid_t id_)
-//         : BarButton(pos_, size_, id_) {
+//         : ABarButton(pos_, size_, id_) {
 //         if (!texture.loadFromFile("/Users/dima/MIPT/SecondSem/MyPaint/source/Sprayer.jpg")) {
 //              std::cerr << "Error opening file\n";
 //         }
@@ -127,11 +127,11 @@ public:
 //     virtual ~SprayerTool() = default;
 // };
 //
-// class EraserTool : public BarButton {
+// class EraserTool : public ABarButton {
 // public:
-//     //BarButton();
+//     //ABarButton();
 //     EraserTool(vec2i pos_, vec2u size_, wid_t id_)
-//         : BarButton(pos_, size_, id_)
+//         : ABarButton(pos_, size_, id_)
 //     {
 //         if (!texture.loadFromFile("/Users/dima/MIPT/SecondSem/MyPaint/source/Eraser.png")) {
 //             std::cerr << "Error opening file\n";
@@ -152,7 +152,7 @@ class ActiveTool {
 public:
     ActiveTool() : activeTool(nullptr) {}
 
-    void setActiveTool(std::unique_ptr<BarButton> tool) {
+    void setActiveTool(std::unique_ptr<ABarButton> tool) {
         activeTool = std::move(tool);
     }
 
@@ -169,7 +169,7 @@ public:
     }
 
 private:
-    std::unique_ptr<BarButton> activeTool;
+    std::unique_ptr<ABarButton> activeTool;
 };
 
 class ToolBar : public IBar {

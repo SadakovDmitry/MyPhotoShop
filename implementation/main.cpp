@@ -44,6 +44,8 @@ int main() {
     loadPluginfromLib("sprayer.dylib");
     loadPluginfromLib("scrollbar_vert.dylib");
     loadPluginfromLib("scrollbar_gor.dylib");
+    loadPluginfromLib("blur.dylib");
+    loadPluginfromLib("brightness.dylib");
 
     std::cout << "Hello!!!\n";
     const float file_height = 1564.0;

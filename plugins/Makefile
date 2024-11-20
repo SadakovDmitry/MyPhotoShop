@@ -1,9 +1,9 @@
 CXX = g++
-CXXFLAGS = -std=c++17 -shared
-LDFLAGS = -L/$(SRC_PATH) -limplementation -lsfml-graphics -lsfml-window -lsfml-system
+CXXFLAGS = -std=c++17 -shared -I$(SRC_PATH)
+LDFLAGS = -L$(SRC_PATH) -limplementation -lsfml-graphics -lsfml-window -lsfml-system
 SRC_PATH = /Users/dima/MIPT/SecondSem/MyPaint/implementation
 COMMON_SRCS = #$(SRC_PATH)/api_sfm.cpp $(SRC_PATH)/api_system.cpp
-PLUGINS = pencil eraser sprayer scrollbar_gor scrollbar_vert
+PLUGINS = pencil eraser sprayer scrollbar_gor scrollbar_vert blur brightness
 
 all: $(PLUGINS:%=%.dylib)
 
@@ -12,7 +12,3 @@ all: $(PLUGINS:%=%.dylib)
 
 clean:
 	rm -f *.dylib
-
-
-#g++ -shared /Users/dima/MIPT/SecondSem/MyPaint/Standard/api_sfm.cpp /Users/dima/MIPT/SecondSem/MyPaint/Standard/api_system.cpp /Users/dima/MIPT/SecondSem/MyPaint/Standard/photoshop.cpp -o pencil.dylib pencil.cpp -std=c++17 -lsfml-graphics -lsfml-window -lsfml-system
-#g++
